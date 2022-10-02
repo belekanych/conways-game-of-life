@@ -2,35 +2,36 @@
 // This starter template is using Vue 3 <script setup> SFCs
 // Check out https://vuejs.org/api/sfc-script-setup.html#script-setup
 import HelloWorld from './components/HelloWorld.vue'
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import type { Ref } from 'vue'
 
 function init(height: number, width: number): boolean[][] {
-  const map: boolean[][] = []
+  const matrix: boolean[][] = []
 
   for (let rowIndex = 0; rowIndex < height; rowIndex++) {
     const row: boolean[] = []
     for (let colIndex = 0; colIndex < width; colIndex++) {
       row.push(false)
     }
-    map.push(row)
+    matrix.push(row)
   }
 
-  return map
+  return matrix
 }
 
 function getNextState(matrix: boolean[][]): boolean[][] {
   return matrix.map((vector: boolean[], row: number): boolean[] => {
     return vector.map((cell: boolean, col: number): boolean => {
       const neighbours = countNeighbours(matrix, row, col)
+      const isAlive = cell
 
       // Any live cell with two or three live neighbours survives
-      if (cell && (neighbours === 2 || neighbours === 3)) {
+      if (isAlive && (neighbours === 2 || neighbours === 3)) {
         return true
       }
 
       // Any dead cell with three live neighbours becomes a live cell
-      if (!cell && neighbours === 3) {
+      if (!isAlive && neighbours === 3) {
         return true
       }
 
@@ -109,25 +110,83 @@ function nextStep() {
   map.value = getNextState(map.value)
 }
 
-const map: Ref<boolean[][]> = ref(init(4, 4))
+function toggleCell(row: number, col: number) {
+  map.value[row][col] = !map.value[row][col]
+}
 
-const ui = computed<string[]>(() => {
-  return map.value.map(row => {
-    return row.map(cell => cell ? '1' : '0').join(' ')
-  })
+function play() {
+  playing.value = !playing.value
+
+  handleTick()
+}
+
+function handleTick() {
+  if (playing.value) {
+    tick = createTick()
+  } else {
+    clearInterval(tick)
+  }
+}
+
+let tick: number
+
+function createTick() {
+   return setInterval(() => {
+    if (playing.value) {
+      nextStep()
+    }
+  }, 1000 / speed.value)
+}
+
+function draw(e: MouseEvent, row: number, col: number) {
+  if (e.which) {
+    map.value[row][col] = true
+  }
+}
+
+const map: Ref<boolean[][]> = ref(init(80, 200))
+
+const playing: Ref<boolean> = ref(false)
+
+const speed: Ref<number> = ref(1)
+
+watch(speed, () => {
+  if (playing.value) {
+    clearInterval(tick)
+  }
+
+  handleTick()
 })
 </script>
 
 <template>
   <div>
-    <a href="https://vitejs.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-    </a>
+    <table>
+      <tr
+        v-for="(row, rowIndex) in map"
+        :key="rowIndex"
+      >
+        <td
+          v-for="(cell, colIndex) in row"
+          :key="colIndex"
+          class="cell"
+          :class="{ 'cell-alive': cell }"
+          @click.prevent="toggleCell(rowIndex, colIndex)"
+          @mousemove="draw($event, rowIndex, colIndex)"
+        ></td>
+      </tr>
+    </table>
+    <button type="button" @click.prevent="play">
+      {{ playing ? 'Pause' : 'Play' }}
+    </button>
+    <button type="button" @click.prevent="nextStep">
+      Next step
+    </button>
+    <label>
+      Speed
+      <input type="number" step="1" min="1" max="100" v-model="speed" />
+    </label>
   </div>
-  <HelloWorld msg="Vite + Vue" />
 </template>
 
 <style scoped>
@@ -141,5 +200,21 @@ const ui = computed<string[]>(() => {
 }
 .logo.vue:hover {
   filter: drop-shadow(0 0 2em #42b883aa);
+}
+
+table {
+  border-spacing: 0;
+  border: 1px solid #eee;
+}
+
+.cell {
+  background-color: white;
+  border: 1px solid #eee;
+  height: 5px;
+  width: 5px;
+}
+
+.cell-alive {
+  background-color: #555;
 }
 </style>
