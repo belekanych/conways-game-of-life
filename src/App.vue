@@ -139,7 +139,7 @@ function createTick() {
 }
 
 function draw(e: MouseEvent, row: number, col: number) {
-  if (e.which) {
+  if (e.buttons && !e.button) {
     map.value[row][col] = true
   }
 }
