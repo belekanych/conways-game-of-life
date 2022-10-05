@@ -2,8 +2,11 @@
 // This starter template is using Vue 3 <script setup> SFCs
 // Check out https://vuejs.org/api/sfc-script-setup.html#script-setup
 import HelloWorld from './components/HelloWorld.vue'
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, onMounted, watchEffect } from 'vue'
 import type { Ref } from 'vue'
+
+const cellSize: number = 6
+const cellBorder: number = 1
 
 function init(height: number, width: number): boolean[][] {
   const matrix: boolean[][] = []
@@ -138,8 +141,11 @@ function createTick() {
   }, 1000 / speed.value)
 }
 
-function draw(e: MouseEvent, row: number, col: number) {
+function draw(e: MouseEvent) {
   if (e.buttons && !e.button) {
+    const col = Math.floor(e.offsetX / cellSize)
+    const row = Math.floor(e.offsetY / cellSize)
+
     map.value[row][col] = true
   }
 }
@@ -150,6 +156,17 @@ const playing: Ref<boolean> = ref(false)
 
 const speed: Ref<number> = ref(1)
 
+const canvas = ref<HTMLCanvasElement | null>(null)
+
+onMounted(() => {
+  if (!canvas.value) {
+    return
+  }
+
+  canvas.value.height = map.value.length * cellSize
+  canvas.value.width = map.value[0].length * cellSize
+})
+
 watch(speed, () => {
   if (playing.value) {
     clearInterval(tick)
@@ -157,25 +174,37 @@ watch(speed, () => {
 
   handleTick()
 })
+
+watchEffect(() => {
+  const ctx = canvas.value?.getContext('2d')
+
+  if (!canvas.value || !ctx) {
+    return
+  }
+
+  ctx.clearRect(0, 0, canvas.value.width, canvas.value.height)
+
+  map.value.forEach((row, rowIndex) => {
+    row.forEach((cell, colIndex) => {
+      const x = colIndex * cellSize
+      const y = rowIndex * cellSize
+
+      if (!cell) {
+        return
+      }
+
+      ctx.fillStyle = 'black'
+      ctx.fillRect(x + cellBorder, y + cellBorder, cellSize - cellBorder * 2, cellSize - cellBorder * 2)
+    })
+  })
+})
 </script>
 
 <template>
   <div>
-    <table>
-      <tr
-        v-for="(row, rowIndex) in map"
-        :key="rowIndex"
-      >
-        <td
-          v-for="(cell, colIndex) in row"
-          :key="colIndex"
-          class="cell"
-          :class="{ 'cell-alive': cell }"
-          @click.prevent="toggleCell(rowIndex, colIndex)"
-          @mousemove="draw($event, rowIndex, colIndex)"
-        ></td>
-      </tr>
-    </table>
+    <canvas ref="canvas" @mousemove="draw">
+      Canvas is not supported in your browser
+    </canvas>
     <button type="button" @click.prevent="play">
       {{ playing ? 'Pause' : 'Play' }}
     </button>
@@ -190,6 +219,9 @@ watch(speed, () => {
 </template>
 
 <style scoped>
+canvas {
+  display: block;
+}
 .logo {
   height: 6em;
   padding: 1.5em;
