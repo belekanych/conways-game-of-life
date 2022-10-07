@@ -9,7 +9,7 @@ start:
 stop:
 	$(DC) stop
 
-sh:
+ssh:
 	$(FRONTEND) sh
 
 dev:

@@ -206,13 +206,13 @@ watchEffect(() => {
       Canvas is not supported in your browser
     </canvas>
     <button type="button" @click.prevent="play">
-      {{ playing ? 'Pause' : 'Play' }}
+      <font-awesome-icon :icon="['fa-solid', playing ? 'fa-pause' : 'fa-play']" />
     </button>
     <button type="button" @click.prevent="nextStep">
-      Next step
+      <font-awesome-icon icon="fa-solid fa-angle-right" />
     </button>
     <label>
-      Speed
+      <font-awesome-icon icon="fa-solid fa-gauge-high" />
       <input type="number" step="1" min="1" max="100" v-model="speed" />
     </label>
   </div>
