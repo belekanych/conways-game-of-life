@@ -1,6 +1,6 @@
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faPlay, faPause, faAngleRight, faGaugeHigh } from '@fortawesome/free-solid-svg-icons'
+import { faPlay, faPause, faAngleRight, faGaugeHigh, faCircleInfo } from '@fortawesome/free-solid-svg-icons'
 import { App } from 'vue'
 
 /* add icons to the library */
@@ -9,6 +9,7 @@ import { App } from 'vue'
     faPause,
     faAngleRight,
     faGaugeHigh,
+    faCircleInfo,
 ].forEach(icon => {
     library.add(icon)
 })
