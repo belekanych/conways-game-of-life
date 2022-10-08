@@ -154,7 +154,7 @@ const map: Ref<boolean[][]> = ref(init(80, 200))
 
 const playing: Ref<boolean> = ref(false)
 
-const speed: Ref<number> = ref(1)
+const speed: Ref<number> = ref(10)
 
 const canvas = ref<HTMLCanvasElement | null>(null)
 
@@ -201,52 +201,34 @@ watchEffect(() => {
 </script>
 
 <template>
-  <div>
-    <canvas ref="canvas" @mousemove="draw">
-      Canvas is not supported in your browser
-    </canvas>
-    <button type="button" @click.prevent="play">
-      <font-awesome-icon :icon="['fa-solid', playing ? 'fa-pause' : 'fa-play']" />
-    </button>
-    <button type="button" @click.prevent="nextStep">
-      <font-awesome-icon icon="fa-solid fa-angle-right" />
-    </button>
-    <label>
-      <font-awesome-icon icon="fa-solid fa-gauge-high" />
-      <input type="number" step="1" min="1" max="100" v-model="speed" />
-    </label>
+  <div class="flex flex-col items-center justify-center bg-slate-50 min-h-screen">
+    <div class="bg-white shadow-lg rounded-lg p-1 w-min m-4">
+      <canvas ref="canvas" @mousemove="draw">
+        Canvas is not supported in your browser
+      </canvas>
+    </div>
+    <div>
+      <button
+        type="button"
+        class="pointer-events-auto rounded-md py-2 px-4 text-center font-medium shadow-sm ring-1 ring-slate-700/10 hover:bg-slate-50"
+        @click.prevent="play"
+      >
+        <font-awesome-icon :icon="['fa-solid', playing ? 'fa-pause' : 'fa-play']" />
+      </button>
+      <button
+        type="button"
+        class="pointer-events-auto rounded-md py-2 px-4 text-center font-medium shadow-sm ring-1 ring-slate-700/10 hover:bg-slate-50"
+        @click.prevent="nextStep"
+      >
+        <font-awesome-icon icon="fa-solid fa-angle-right" />
+      </button>
+      <label>
+        <font-awesome-icon icon="fa-solid fa-gauge-high" />
+        <input type="number" step="1" min="1" max="100" v-model="speed" />
+      </label>
+    </div>
   </div>
 </template>
 
 <style scoped>
-canvas {
-  display: block;
-}
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
-}
-
-table {
-  border-spacing: 0;
-  border: 1px solid #eee;
-}
-
-.cell {
-  background-color: white;
-  border: 1px solid #eee;
-  height: 5px;
-  width: 5px;
-}
-
-.cell-alive {
-  background-color: #555;
-}
 </style>
