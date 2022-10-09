@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import Btn from './Btn.vue'
+
 const emit = defineEmits([
   'random',
   'clear',
@@ -28,35 +30,23 @@ function clear() {
 
 <template>
   <div class="flex flex-col">
-    <button
-      type="button"
-      class="pointer-events-auto rounded-lg shadow-lg bg-white py-2 px-4 text-center font-medium active:scale-90 active:shadow-md transition w-12 mb-2"
-      :class="{'shadow-xl scale-105 text-blue-700': props.modelValue}"
-      @click.prevent="pencil"
-    >
-      <font-awesome-icon icon="fa-solid fa-pencil" />
-    </button>
-    <button
-      type="button"
-      class="pointer-events-auto rounded-lg shadow-lg bg-white py-2 px-4 text-center font-medium active:scale-90 active:shadow-md transition w-12 mb-2"
-      :class="{'shadow-xl scale-105 text-blue-700': !props.modelValue}"
-      @click.prevent="erase"
-    >
-      <font-awesome-icon icon="fa-solid fa-eraser" />
-    </button>
-    <button
-      type="button"
-      class="pointer-events-auto rounded-lg shadow-lg bg-white py-2 px-4 text-center font-medium active:scale-90 active:shadow-md transition w-12 mb-2"
-      @click.prevent="random"
-    >
-      <font-awesome-icon icon="fa-solid fa-shuffle" />
-    </button>
-    <button
-      type="button"
-      class="pointer-events-auto rounded-lg shadow-lg bg-white py-2 px-4 text-center font-medium active:scale-90 active:shadow-md transition w-12"
-      @click.prevent="clear"
-    >
-      <font-awesome-icon icon="fa-solid fa-trash" />
-    </button>
+    <btn
+      :class="['mb-2', props.modelValue && 'shadow-xl scale-110 text-blue-700 dark:text-blue-300']"
+      icon="pencil"
+      @click="pencil"
+    />
+    <btn
+      :class="['mb-2', !props.modelValue && 'shadow-xl scale-110 text-blue-700 dark:text-blue-300']"
+      icon="eraser"
+      @click="erase"
+    />
+    <btn
+      icon="shuffle"
+      @click="random"
+    />
+    <btn
+      icon="trash"
+      @click="clear"
+    />
   </div>
 </template>

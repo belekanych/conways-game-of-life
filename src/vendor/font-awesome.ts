@@ -10,6 +10,8 @@ import {
     faTrash,
     faPencil,
     faEraser,
+    faMoon,
+    faSun,
 } from '@fortawesome/free-solid-svg-icons'
 import { App } from 'vue'
 
@@ -24,6 +26,8 @@ import { App } from 'vue'
     faTrash,
     faPencil,
     faEraser,
+    faMoon,
+    faSun,
 ].forEach(icon => {
     library.add(icon)
 })

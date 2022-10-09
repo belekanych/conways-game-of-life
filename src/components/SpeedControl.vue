@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import Btn from './Btn.vue'
 
 const emit = defineEmits(['update:modelValue'])
 
@@ -26,16 +27,13 @@ function onSelect(speed: number): void {
 
 <template>
   <div class="relative">
-    <button
-      type="button"
-      class="pointer-events-auto rounded-lg shadow-lg bg-white py-2 px-4 text-center font-medium active:scale-90 active:shadow-md transition w-12"
-      @click.prevent="toggle"
-    >
-      <font-awesome-icon icon="fa-gauge-high" />
-    </button>
+    <btn
+      icon="gauge-high"
+      @click="toggle"
+    />
     <ul
       v-show="expanded"
-      class="absolute mt-1 right-0 rounded-lg shadow-lg bg-white overflow-hidden"
+      class="absolute mt-1 right-0 rounded-lg shadow-lg bg-white overflow-hidden dark:bg-slate-800 dark:text-white"
     >
       <li
         v-for="(speed, name, index) in options"
@@ -43,7 +41,7 @@ function onSelect(speed: number): void {
       >
         <button
           type="button"
-          class="w-full text-right py-1 px-2 w-24 text-sm hover:bg-gray-50"
+          class="w-full text-right py-1 px-2 w-24 text-sm hover:bg-slate-50 hover:dark:bg-slate-700 border-slate-200 dark:border-slate-600"
           :class="{'border-t': index, 'font-bold': speed === props.modelValue}"
           @click.prevent="onSelect(speed)"
         >
