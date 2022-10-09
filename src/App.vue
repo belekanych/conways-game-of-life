@@ -5,6 +5,7 @@ import HelloWorld from './components/HelloWorld.vue'
 import { ref, computed, watch, onMounted, watchEffect } from 'vue'
 import type { Ref } from 'vue'
 import SpeedControl from './components/SpeedControl.vue'
+import Toolbar from './components/Toolbar.vue'
 
 const cellSize: number = 6
 const cellBorder: number = 1
@@ -148,8 +149,20 @@ function draw(e: MouseEvent) {
     const col = Math.floor(e.offsetX / cellSize)
     const row = Math.floor(e.offsetY / cellSize)
 
-    map.value[row][col] = true
+    map.value[row][col] = drawMode.value
   }
+}
+
+function random() {
+  map.value = map.value.map(row => {
+    return row.map(() => Math.random() < 0.3)
+  })
+}
+
+function clear() {
+  map.value = map.value.map(row => {
+    return row.map(() => false)
+  })
 }
 
 const map: Ref<boolean[][]> = ref(init(80, 200))
@@ -157,6 +170,8 @@ const map: Ref<boolean[][]> = ref(init(80, 200))
 const playing: Ref<boolean> = ref(false)
 
 const speed: Ref<number> = ref(4)
+
+const drawMode = ref<boolean>(true)
 
 const canvas = ref<HTMLCanvasElement | null>(null)
 
@@ -210,10 +225,17 @@ watchEffect(() => {
         <font-awesome-icon icon="circle-info" class="text-3xl"/>
       </a>
     </h1>
-    <div class="bg-white shadow-lg rounded-lg p-1 w-min m-4">
-      <canvas ref="canvas" @mousemove="draw">
-        Canvas is not supported in your browser
-      </canvas>
+    <div class="flex m-4 pr-12">
+      <toolbar
+        v-model="drawMode"
+        @random="random"
+        @clear="clear"
+      />
+      <div class="bg-white shadow-lg rounded-lg p-1 w-min mx-4">
+        <canvas ref="canvas" @mousemove="draw">
+          Canvas is not supported in your browser
+        </canvas>
+      </div>
     </div>
     <div class="flex">
       <speed-control v-model="speed" />
