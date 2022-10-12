@@ -1,17 +1,13 @@
 <script setup lang="ts">
-// This starter template is using Vue 3 <script setup> SFCs
-// Check out https://vuejs.org/api/sfc-script-setup.html#script-setup
-import HelloWorld from './components/HelloWorld.vue'
-import { ref, computed, watch, onMounted, watchEffect, provide } from 'vue'
+import { ref, watch, onMounted, watchEffect, provide } from 'vue'
 import type { Ref } from 'vue'
 import SpeedControl from './components/SpeedControl.vue'
 import Toolbar from './components/Toolbar.vue'
 import WorkspaceBar from './components/WorkspaceBar.vue'
 import { useDark } from '@vueuse/core'
 import Btn from './components/Btn.vue'
-
-const cellSize: number = 6
-const cellBorder: number = 1
+import Screen from './components/Screen.vue'
+import Heading from './components/Heading.vue'
 
 function init(height: number, width: number): boolean[][] {
   const matrix: boolean[][] = []
@@ -19,7 +15,6 @@ function init(height: number, width: number): boolean[][] {
   for (let rowIndex = 0; rowIndex < height; rowIndex++) {
     const row: boolean[] = []
     for (let colIndex = 0; colIndex < width; colIndex++) {
-      // row.push(Math.random() < 0.3)
       row.push(false)
     }
     matrix.push(row)
@@ -119,10 +114,6 @@ function nextStep() {
   map.value = getNextState(map.value)
 }
 
-function toggleCell(row: number, col: number) {
-  map.value[row][col] = !map.value[row][col]
-}
-
 function play() {
   playing.value = !playing.value
 
@@ -147,13 +138,8 @@ function createTick() {
   }, 1000 / speed.value)
 }
 
-function draw(e: MouseEvent) {
-  if (e.buttons && !e.button) {
-    const col = Math.floor(e.offsetX / cellSize)
-    const row = Math.floor(e.offsetY / cellSize)
-
-    map.value[row][col] = drawMode.value
-  }
+function draw(row: number, col: number) {
+  map.value[row][col] = drawMode.value
 }
 
 function random() {
@@ -175,19 +161,8 @@ const playing: Ref<boolean> = ref(false)
 const speed: Ref<number> = ref(4)
 
 const drawMode = ref<boolean>(true)
-
-const canvas = ref<HTMLCanvasElement | null>(null)
   
 const isDark = useDark()
-
-onMounted(() => {
-  if (!canvas.value) {
-    return
-  }
-
-  canvas.value.height = map.value.length * cellSize
-  canvas.value.width = map.value[0].length * cellSize
-})
 
 watch(speed, () => {
   if (playing.value) {
@@ -197,52 +172,23 @@ watch(speed, () => {
   handleTick()
 })
 
-watchEffect(() => {
-  const ctx = canvas.value?.getContext('2d')
-
-  if (!canvas.value || !ctx) {
-    return
-  }
-
-  ctx.clearRect(0, 0, canvas.value.width, canvas.value.height)
-
-  map.value.forEach((row, rowIndex) => {
-    row.forEach((cell, colIndex) => {
-      const x = colIndex * cellSize
-      const y = rowIndex * cellSize
-
-      if (!cell) {
-        return
-      }
-
-      ctx.fillStyle = isDark.value ? 'white' : 'black'
-      ctx.fillRect(x + cellBorder, y + cellBorder, cellSize - cellBorder * 2, cellSize - cellBorder * 2)
-    })
-  })
-})
-
 provide('isDark', isDark)
 </script>
 
 <template>
   <div class="flex flex-col items-center justify-center bg-slate-100 min-h-screen dark:bg-slate-900">
-    <h1 class="text-slate-900 font-extrabold text-3xl sm:text-4xl lg:text-5xl tracking-tight text-center dark:text-white mb-2">
-      Conway's Game of Life
-      <a href="https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life" target="_blank" class="cursor-alias hover:text-blue-700 hover:dark:text-blue-300">
-        <font-awesome-icon icon="circle-info" class="text-3xl"/>
-      </a>
-    </h1>
+    <heading />
     <div class="flex m-4">
       <toolbar
         v-model="drawMode"
         @random="random"
         @clear="clear"
       />
-      <div class="bg-white shadow-lg rounded-lg p-1 w-min mx-4 dark:bg-slate-800">
-        <canvas ref="canvas" @mousemove="draw">
-          Canvas is not supported in your browser
-        </canvas>
-      </div>
+      <screen
+        :map="map"
+        :color="isDark ? 'white' : 'black'"
+        @draw="draw"
+      />
       <workspace-bar />
     </div>
     <div class="flex">
