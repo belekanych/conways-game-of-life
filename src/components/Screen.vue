@@ -59,7 +59,7 @@ function onMouseMove(e: MouseEvent) {
 </script>
 
 <template>
-  <div class="bg-white shadow-lg rounded-lg p-1 w-min mx-4 dark:bg-slate-800">
+  <div class="bg-white shadow-lg rounded-lg p-1 w-min mx-4 dark:bg-slate-800 transition">
     <canvas ref="canvas" @mousemove="onMouseMove">
       Canvas is not supported in your browser
     </canvas>

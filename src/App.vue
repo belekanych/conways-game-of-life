@@ -176,7 +176,7 @@ provide('isDark', isDark)
 </script>
 
 <template>
-  <div class="flex flex-col items-center justify-center bg-slate-100 min-h-screen dark:bg-slate-900">
+  <div class="flex flex-col items-center justify-center bg-slate-100 min-h-screen dark:bg-slate-900 transition">
     <heading />
     <div class="flex m-4">
       <toolbar
