@@ -2,6 +2,10 @@
 import { ref } from 'vue'
 import Btn from './Btn.vue'
 
+const SPEED_SLOW = 1
+const SPEED_NORMAL = 4
+const SPEED_FAST = 10
+
 const emit = defineEmits(['update:modelValue'])
 
 const props = defineProps<{
@@ -11,9 +15,9 @@ const props = defineProps<{
 const expanded = ref<boolean>(false)
 
 const options = {
-  'Slow': 1,
-  'Normal': 4,
-  'Fast': 10,
+  'Slow': SPEED_SLOW,
+  'Normal': SPEED_NORMAL,
+  'Fast': SPEED_FAST,
 }
 
 function toggle(): void {

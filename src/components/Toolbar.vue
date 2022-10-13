@@ -1,52 +1,29 @@
 <script setup lang="ts">
 import Btn from './Btn.vue'
+import { useMapStore } from '../store/map'
 
-const emit = defineEmits([
-  'random',
-  'clear',
-  'update:modelValue'
-])
-
-const props = defineProps<{
-  modelValue: boolean,
-}>()
-
-function pencil() {
-  emit('update:modelValue', true)
-}
-
-function erase() {
-  emit('update:modelValue', false)
-}
-
-function random() {
-  emit('random')
-}
-
-function clear() {
-  emit('clear')
-}
+const mapStore = useMapStore()
 </script>
 
 <template>
   <div class="flex flex-col">
     <btn
-      :class="['mb-2', props.modelValue && 'shadow-xl scale-110 text-blue-700 dark:text-blue-300']"
+      :class="['mb-2', mapStore.isPencilMode && 'shadow-xl scale-110 text-blue-700 dark:text-blue-300']"
       icon="pencil"
-      @click="pencil"
+      @click="mapStore.selectPencil"
     />
     <btn
-      :class="['mb-2', !props.modelValue && 'shadow-xl scale-110 text-blue-700 dark:text-blue-300']"
+      :class="['mb-2', mapStore.isEraserMode && 'shadow-xl scale-110 text-blue-700 dark:text-blue-300']"
       icon="eraser"
-      @click="erase"
+      @click="mapStore.selectEraser"
     />
     <btn
       icon="shuffle"
-      @click="random"
+      @click="mapStore.shuffle"
     />
     <btn
       icon="trash"
-      @click="clear"
+      @click="mapStore.clear"
     />
   </div>
 </template>

@@ -1,19 +1,15 @@
 <script setup lang="ts">
 import { ref, onMounted, watchEffect } from 'vue'
+import { useDarkMode } from '../store/darkMode';
+import { useMapStore } from '../store/map';
 
 const CELL_SIZE: number = 6
 const CELL_BORDER: number = 1
 
+const mapStore = useMapStore()
+const darkMode = useDarkMode()
+
 const canvas = ref<HTMLCanvasElement | null>(null)
-
-const props = defineProps<{
-  map: boolean[][],
-  color: string,
-}>()
-
-const emit = defineEmits<{
-  (e: 'draw', row: number, col: number): void
-}>()
 
 watchEffect(() => {
   const ctx = canvas.value?.getContext('2d')
@@ -24,7 +20,7 @@ watchEffect(() => {
 
   ctx.clearRect(0, 0, canvas.value.width, canvas.value.height)
 
-  props.map.forEach((row, rowIndex) => {
+  mapStore.map.forEach((row, rowIndex) => {
     row.forEach((cell, colIndex) => {
       const x = colIndex * CELL_SIZE
       const y = rowIndex * CELL_SIZE
@@ -33,7 +29,7 @@ watchEffect(() => {
         return
       }
 
-      ctx.fillStyle = props.color
+      ctx.fillStyle = darkMode.isDark ? 'white' : 'black'
       ctx.fillRect(x + CELL_BORDER, y + CELL_BORDER, CELL_SIZE - CELL_BORDER * 2, CELL_SIZE - CELL_BORDER * 2)
     })
   })
@@ -44,8 +40,8 @@ onMounted(() => {
     return
   }
 
-  canvas.value.height = props.map.length * CELL_SIZE
-  canvas.value.width = props.map[0].length * CELL_SIZE
+  canvas.value.height = mapStore.map.length * CELL_SIZE
+  canvas.value.width = mapStore.map[0].length * CELL_SIZE
 })
 
 function onMouseMove(e: MouseEvent) {
@@ -53,7 +49,7 @@ function onMouseMove(e: MouseEvent) {
     const col = Math.floor(e.offsetX / CELL_SIZE)
     const row = Math.floor(e.offsetY / CELL_SIZE)
 
-    emit('draw', row, col)
+    mapStore.draw(row, col)
   }
 }
 </script>

@@ -1,25 +1,18 @@
 <script setup lang="ts">
-import { useToggle } from '@vueuse/core'
-import { inject, WritableComputedRef } from 'vue';
 import Btn from './Btn.vue'
+import { useDarkMode } from '../store/darkMode';
 
-const isDark = inject<WritableComputedRef<boolean>>('isDark')
-  
-const toggleDark = useToggle(isDark)
+const darkMode = useDarkMode()
 
-/**
- * Vue use has some issues with TypeScript.
- */
 function toggle() {
-  // @ts-ignore
-  toggleDark()
+  darkMode.toggleDark()
 }
 </script>
 
 <template>
   <div>
     <btn
-      :icon="isDark ? 'moon' : 'sun'"
+      :icon="darkMode.isDark ? 'moon' : 'sun'"
       @click="toggle"
     />
   </div>
