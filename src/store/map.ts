@@ -1,11 +1,14 @@
 import { defineStore } from 'pinia'
+import { HEIGHT, WIDTH } from '../config/map'
+import { RAND_SIZE, MODE_ERASER, MODE_PENCIL } from '../config/tools'
 
-const HEIGHT = 80
-const WIDTH = 200
-const RAND_SIZE = 0.3
-const MODE_PENCIL = true
-const MODE_ERASER = false
-
+/**
+ * Create an initial map.
+ *
+ * @param height Initial map height
+ * @param width Initial map width
+ * @returns Matrix of cells
+ */
 function init(height: number, width: number): boolean[][] {
   const matrix: boolean[][] = []
 
@@ -20,6 +23,12 @@ function init(height: number, width: number): boolean[][] {
   return matrix
 }
 
+/**
+ * Calculate next state for the map
+ *
+ * @param matrix Matrix of cells
+ * @returns Next state of the passed matrix of cells
+ */
 function getNextState(matrix: boolean[][]): boolean[][] {
   return matrix.map((vector: boolean[], row: number): boolean[] => {
     return vector.map((cell: boolean, col: number): boolean => {
@@ -42,6 +51,14 @@ function getNextState(matrix: boolean[][]): boolean[][] {
   })
 }
 
+/**
+ * Returns amount of alive cells near the selected cell.
+ *
+ * @param matrix Matrix of cells
+ * @param row Index of the cell's row
+ * @param col Index of the cell's column
+ * @returns Amount of alive neighbours
+ */
 function countNeighbours(matrix: boolean[][], row: number, col: number): number {
   const height = matrix.length
   const width = height ? matrix[0].length : 0
@@ -108,46 +125,97 @@ function countNeighbours(matrix: boolean[][], row: number, col: number): number 
 }
 
 export const useMapStore = defineStore('map', {
+  /**
+   * Store state.
+   *
+   * @returns 
+   */
   state: () => {
     return {
+      /**
+       * Matrix of cells.
+       */
       map: init(HEIGHT, WIDTH),
+
+      /**
+       * Drawing modes (pencil or eraser).
+       */
       drawMode: MODE_PENCIL,
     }
   },
 
+  /**
+   * Store getters.
+   */
   getters: {
+    /**
+     * Returns true if the selected mode is pencil.
+     *
+     * @param state 
+     * @returns 
+     */
     isPencilMode(state) {
       return state.drawMode === MODE_PENCIL
     },
 
+    /**
+     * Returns true if the selected mode is eraser.
+     *
+     * @param state 
+     * @returns 
+     */
     isEraserMode(state) {
       return state.drawMode === MODE_ERASER
     },
   },
 
+  /**
+   * Store actions.
+   */
   actions: {
+    /**
+     * Calculate the next step for the store's map.
+     */
     nextStep() {
       this.map = getNextState(this.map)
     },
 
+    /**
+     * Select the pencil drawing mode.
+     */
     selectPencil() {
       this.drawMode = MODE_PENCIL
     },
 
+    /**
+     * Select the eraser drawing mode.
+     */
     selectEraser() {
       this.drawMode = MODE_ERASER
     },
 
+    /**
+     * Set the cell's state depending on the selected draw mode.
+     *
+     * @param row Index of the cell's row
+     * @param col Index of the cell's col
+     */
     draw(row: number, col: number) {
       this.map[row][col] = this.drawMode
     },
 
+    /**
+     * Generate a random map.
+     */
     shuffle() {
       this.map = this.map.map(row => {
         return row.map(() => Math.random() < RAND_SIZE)
       })
     },
 
+    /**
+     * Remove all cells.
+     */
     clear() {
       this.map = this.map.map(row => {
         return row.map(() => false)

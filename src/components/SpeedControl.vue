@@ -1,17 +1,17 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { SPEED_SLOW, SPEED_NORMAL, SPEED_FAST } from '../config/speed'
 import Btn from './Btn.vue'
 
-const SPEED_SLOW = 1
-const SPEED_NORMAL = 4
-const SPEED_FAST = 10
-
-const emit = defineEmits(['update:modelValue'])
-
+// Props
 const props = defineProps<{
   modelValue: number
 }>()
 
+// Emits
+const emit = defineEmits(['update:modelValue'])
+
+// Data
 const expanded = ref<boolean>(false)
 
 const options = {
@@ -20,6 +20,7 @@ const options = {
   'Fast': SPEED_FAST,
 }
 
+// Methods
 function toggle(): void {
   expanded.value = !expanded.value
 }

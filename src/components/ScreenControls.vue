@@ -1,18 +1,29 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
+import { SPEED_DEFAULT } from '../config/speed'
 import { useMapStore } from '../store/map'
-import SpeedControl from './SpeedControl.vue'
 import Btn from './Btn.vue'
+import SpeedControl from './SpeedControl.vue'
 
-const DEFAULT_SPEED = 4
-
+// Store
 const mapStore = useMapStore()
 
+// Data
 const playing = ref<boolean>(false)
-const speed = ref<number>(DEFAULT_SPEED)
+const speed = ref<number>(SPEED_DEFAULT)
 
 let tick: number
 
+// Watchers
+watch(speed, () => {
+  if (playing.value) {
+    clearInterval(tick)
+  }
+
+  handleTick()
+})
+
+// Methods
 function createTick() {
    return setInterval(() => {
     if (playing.value) {
@@ -34,14 +45,6 @@ function play() {
 
   handleTick()
 }
-
-watch(speed, () => {
-  if (playing.value) {
-    clearInterval(tick)
-  }
-
-  handleTick()
-})
 </script>
 
 <template>

@@ -1,9 +1,11 @@
 <script setup lang="ts">
+import { useDarkMode } from '../store/darkMode'
 import Btn from './Btn.vue'
-import { useDarkMode } from '../store/darkMode';
 
+// Store
 const darkMode = useDarkMode()
 
+// Methods
 function toggle() {
   darkMode.toggleDark()
 }

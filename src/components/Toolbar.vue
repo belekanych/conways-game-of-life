@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import Btn from './Btn.vue'
 import { useMapStore } from '../store/map'
+import Btn from './Btn.vue'
 
+// Store
 const mapStore = useMapStore()
 </script>
 
